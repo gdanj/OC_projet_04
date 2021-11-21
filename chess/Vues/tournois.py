@@ -1,6 +1,6 @@
 from chess.Controleurs.joueurs import JoueursControleurs
 
-class JoueursVues:
+class TournoisVues:
 	def formAddJoueur(self):
 		print("Pour retourner au menu principal, entrez 'menu' \nEntrez le nom du joueur")
 		lastname = input()
