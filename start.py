@@ -1,4 +1,4 @@
 from chess.Vues.joueurs import JoueursVues
 
 newVues = JoueursVues()
-newVues.formAddJoueur()
+newVues.menu()
