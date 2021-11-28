@@ -1,7 +1,7 @@
 from chess.Models.joueurs import JoueursModels
 import re
 
-class JoueursControleurs:
+class TournoisControleurs:
 		
 	def add(self, lastname, firstname, birthDate, sexe, classement):
 		regexName = re.compile(r"^[a-z ,.'-]+$", re.IGNORECASE)

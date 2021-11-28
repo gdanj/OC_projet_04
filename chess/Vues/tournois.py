@@ -1,65 +1,33 @@
-from chess.Controleurs.joueurs import JoueursControleurs
+from chess.Controleurs.tournois import TournoisControleurs
 
 class TournoisVues:
-	def formAddJoueur(self):
-		print("Pour retourner au menu principal, entrez 'menu' \nEntrez le nom du joueur")
-		lastname = input()
-		if lastname == "menu":
+	def formAddTournois(self):
+		print("Pour retourner au menu principal, entrez 'menu' \nEntrez le nom du tournois")
+		name = input()
+		if name == "menu":
 			return False
-		print("Pour retourner au menu principal, entrez 'menu' \nEntrez le prénom du joueur")
-		firstname = input()
-		if firstname == "menu":
+		print("Pour retourner au menu principal, entrez 'menu' \nEntrez le lieu du tournois")
+		lieu = input()
+		if lieu == "menu":
 			return False
-		print("Pour retourner au menu principal, entrez 'menu' \nEntrez la date de naissance du joueur au format 'dd/mm/aaaa'")
-		birthDate = input()
-		if birthDate == "menu":
+		print("Pour retourner au menu principal, entrez 'menu' \nEntrez la date de début du tournois au format 'dd/mm/aaaa'")
+		dataTournois = input()
+		if dataTournois == "menu":
 			return False
-		print("Pour retourner au menu principal, entrez 'menu' \nEntrez le genre du joueur,\n'M' pour masculin \n'F' pour féminin")
-		sexe = input()
-		if sexe == "menu":
+		print("Pour retourner au menu principal, entrez 'menu' \nEntrez les indices des joueurs du tournois")
+		list_joueurs_tournois = []
+		for i in range(8):
+			joueur = input()
+			if joueur == "menu":
+				return False
+			list_joueurs_tournois.append(int(joueurs))
+		print("Pour retourner au menu principal, entrez 'menu' \nEntrez le type de tournois :\t 'bullet', 'blitz' ou 'coup rapide'")
+		typeTournois = input()
+		if typeTournois == "menu":
 			return False
-		print("Pour retourner au menu principal, entrez 'menu' \nEntrez le classement du joueur")
-		classement = input()
-		if classement == "menu":
+		print("Pour retourner au menu principal, entrez 'menu' \nEntrez la description du tournois")
+		description = input()
+		if description == "menu":
 			return False
-		newJoueur = JoueursControleurs()
-		newJoueur.add(lastname, firstname, birthDate, sexe, classement)
-
-	def listJoueurDisplay(self):
-		list_joueurs = JoueursControleurs()
-		print('\n')
-		tab = list(list_joueurs.joueur_all())
-		print("Triez par :\n'1' Ordre d'arriver \n'2' Nom \n'3' Prénom\n'4' Classement")
-		sort_on = input()
-		key_dict = ""
-		if sort_on == '1':
-			key_dict = "a"
-		if sort_on == '2':
-			key_dict = "firstname"
-		if sort_on == '3':
-			key_dict = "lastname"
-		if sort_on == '4':
-			key_dict = "classement"
-		if key_dict == "a":
-			result = tab
-		else:
- 			decorated = [(dict_[key_dict], dict_) for dict_ in tab]
- 			decorated.sort()
- 			result = [dict_ for (key, dict_) in decorated]
-		print("Nom "  + "\t Prénom " + "\t Date de naissance " + "\t Sexe " + "\t Classeement ")
-		for joueur in result:
-			print(joueur["lastname"] + "\t" + joueur["firstname"] + "\t\t" + joueur["birthDate"] + "\t\t" + joueur["sexe"] + "\t\t" + str(joueur["classement"]))
-		print('\n')
-	
-	def menu(self):
-		while True:
-			print("Entrez '1' pour afficher la liste des joueur")
-			print("Entrez '2' pour ajouter un joueur")
-			print("Entrez 'exit' pour quitter le programme")
-			commande = input()
-			if commande == '1':
-				self.listJoueurDisplay()
-			if commande == '2':
-				self.formAddJoueur()
-			if commande == 'exit':
-				break
+		newTournois = TournoisControleurs()
+		newTournois.add(name, lieu, dataTournois, list_joueurs_tournois, typeTournois, description)
