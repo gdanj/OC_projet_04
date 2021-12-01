@@ -1,6 +1,6 @@
 from tinydb import TinyDB, Query
 
-class TournoissModels:
+class JoueursModels:
 	def create(self, lastname, firstname, birthDate, sexe, classement):
 		db = TinyDB('chess/Models/bdd/db.json')
 		Joueurs = db.table('Joueurs')

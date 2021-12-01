@@ -1,26 +1,22 @@
 from tinydb import TinyDB, Query
 
-class JoueursModels:
-	def create(self, lastname, firstname, birthDate, sexe, classement):
+class TournoisModels:
+	def create(self, name, lieu, dateDebutTournois, list_joueurs_tournois, typeTournois, description):
 		db = TinyDB('chess/Models/bdd/db.json')
-		Joueurs = db.table('Joueurs')
-		self.lastname = lastname.capitalize()
-		self.firstname = firstname.capitalize()
-		self.birthDate = birthDate
-		self.sexe = sexe.capitalize()
-		self.classement = int(classement)
-		Joueurs.insert({'lastname': self.lastname, 'firstname': self.firstname, 'birthDate' : self.birthDate, 'sexe' : self.sexe, 'classement' : self.classement})
+		Tournois = db.table('Tournois')
+		self.name = name.capitalize()
+		self.lieu = lieu.capitalize()
+		from datetime import date
+		today = date.today()
+		d1 = today.strftime("%d/%m/%Y")
+		self.dateDebutTournois = d1
+		self.dateFinTournois = "En cours"
+		self.list_joueurs_tournois = list_joueurs_tournois
+		self.typeTournois = typeTournois.capitalize()
+		self.description = description
+		Tournois.insert({'name': self.name, 'lieu': self.lieu, 'dataTournois' : self.dateDebutTournois, 'dateFinTournois' : self.dateFinTournois, 'list_joueurs_tournois' : self.list_joueurs_tournois, 'typeTournois' : self.typeTournois, 'description' : self.description})
 
-	def allJoueur(self):
+	def allTournois(self):
 		db = TinyDB('chess/Models/bdd/db.json')
-		Joueurs = db.table('Joueurs')
-		return Joueurs.all()
-
-
-	def update(self, lastname = "", firstname = "", birthDate = "", sexe = "", classement = ""):
-		self.lastname = lastname or self.lastname
-		self.firstname = firstname or self.firstname
-		self.birthDate = birthDate or self.birthDate
-		self.sexe = sexe or self.sexe
-		self.classement = classement or self.classement
-		
+		Tournois = db.table('Tournois')
+		return Tournois.all()

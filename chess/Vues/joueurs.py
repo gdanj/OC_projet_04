@@ -1,4 +1,5 @@
 from chess.Controleurs.joueurs import JoueursControleurs
+from tinydb import TinyDB, Query
 
 class JoueursVues:
 	def formAddJoueur(self):
@@ -28,7 +29,7 @@ class JoueursVues:
 	def listJoueurDisplay(self):
 		list_joueurs = JoueursControleurs()
 		print('\n')
-		tab = list(list_joueurs.joueur_all())
+		tab = list_joueurs.joueur_all()
 		print("Triez par :\n'1' Ordre d'arriver \n'2' Nom \n'3' Prénom\n'4' Classement")
 		sort_on = input()
 		key_dict = ""
@@ -44,22 +45,34 @@ class JoueursVues:
 			result = tab
 		else:
  			decorated = [(dict_[key_dict], dict_) for dict_ in tab]
- 			decorated.sort()
+ 			decorated.sort(reverse=True)
  			result = [dict_ for (key, dict_) in decorated]
-		print("Nom "  + "\t Prénom " + "\t Date de naissance " + "\t Sexe " + "\t Classeement ")
+		print("N°" + "\t Nom "  + "\t Prénom " + "\t Date de naissance " + "\t Sexe " + "\t Classeement ")
 		for joueur in result:
-			print(joueur["lastname"] + "\t" + joueur["firstname"] + "\t\t" + joueur["birthDate"] + "\t\t" + joueur["sexe"] + "\t\t" + str(joueur["classement"]))
+			print(str(joueur.doc_id) + "\t" +joueur["lastname"] + "\t\t" + joueur["firstname"] + "\t\t" + joueur["birthDate"] + "\t\t" + joueur["sexe"] + "\t\t" + str(joueur["classement"]))
 		print('\n')
-	
-	def menu(self):
-		while True:
-			print("Entrez '1' pour afficher la liste des joueur")
-			print("Entrez '2' pour ajouter un joueur")
-			print("Entrez 'exit' pour quitter le programme")
-			commande = input()
-			if commande == '1':
-				self.listJoueurDisplay()
-			if commande == '2':
-				self.formAddJoueur()
-			if commande == 'exit':
-				break
+
+	def listJoueurDisplayFind(self):
+		print('\n')
+		print("Recherchez par :\n'1' Nom \n'2' Prénom \n")
+		sort_on = input()
+		User = Query()
+		db = TinyDB('chess/Models/bdd/db.json')
+		joueurTable = db.table('Joueurs')
+		key_dict = ""
+		if sort_on == '1':
+			key_dict = "lastname"
+			print("Entrez le nom du joueuer")
+		if sort_on == '2':
+			key_dict = "firstname"
+			print("Entrez le prénom du joueuer")
+		if sort_on == 'menu':
+			return False
+		if key_dict:
+			tab = list(joueurTable.search(User[key_dict] == input().capitalize()))
+			i = 1
+			print("N°" + "\t Nom "  + "\t Prénom " + "\t Date de naissance " + "\t Sexe " + "\t Classeement ")
+			for joueur in tab:
+				print(str(joueur.doc_id) + "\t" +joueur["lastname"] + "\t\t" + joueur["firstname"] + "\t\t" + joueur["birthDate"] + "\t\t" + joueur["sexe"] + "\t\t" + str(joueur["classement"]))
+			print('\n')
+			return tab

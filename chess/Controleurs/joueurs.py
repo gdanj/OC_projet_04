@@ -2,7 +2,6 @@ from chess.Models.joueurs import JoueursModels
 import re
 
 class JoueursControleurs:
-		
 	def add(self, lastname, firstname, birthDate, sexe, classement):
 		regexName = re.compile(r"^[a-z ,.'-]+$", re.IGNORECASE)
 		regexBirthDate = re.compile(r"(0[1-9]|1[0-9]|2[0-9]|3[01]).(0[1-9]|1[012]).[0-9]{4}")
