@@ -17,19 +17,18 @@ class TournoisVues:
 		for i in range(8):
 			while True:
 				print("joueur n° " + str(i + 1))
-				print("\nEntrez 1 pour ajouter un joueur\nEntrez 2 pour rechercher un joueur\nEntre 3 pour afficher la liste complète")
+				print("\nEntrez '1' pour ajouter l'ID d'un joueur\nEntrez 2 pour rechercher l'ID un joueur\nEntre 3 pour afficher la liste complète\nEntrez '4' pour ajouté un nouveau joueur à la base de donnée")
 				choix = input()
-				if choix == "1":
+				if choix == "4":
 					newJoueur = JoueursVues()
 					if newJoueur.formAddJoueur():
 						break
 				if choix == "2":
 					findJoueur = JoueursVues()
-					result = findJoueur.listJoueurDisplayFind()
-					if result:
-						list_joueurs_tournois.append(int(result))
-					else:
-						continue
+					findJoueur.listJoueurDisplayFind()
+					continue
+				if choix == "1":
+					list_joueurs_tournois.append(int(input()))
 				if choix == "3":
 					newDisplay = JoueursVues()
 					newDisplay.listJoueurDisplay()

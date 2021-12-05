@@ -1,3 +1,4 @@
+from re import search
 from chess.Controleurs.joueurs import JoueursControleurs
 from tinydb import TinyDB, Query
 
@@ -44,35 +45,37 @@ class JoueursVues:
 		if key_dict == "a":
 			result = tab
 		else:
- 			decorated = [(dict_[key_dict], dict_) for dict_ in tab]
- 			decorated.sort(reverse=True)
- 			result = [dict_ for (key, dict_) in decorated]
-		print("N°" + "\t Nom "  + "\t Prénom " + "\t Date de naissance " + "\t Sexe " + "\t Classeement ")
+			decorated = [(dict_[key_dict], dict_) for dict_ in tab]
+			decorated.sort(reverse=True)
+			result = [dict_ for (key, dict_) in decorated]
+			print("N°" + "\t Nom "  + "\t Prénom " + "\t Date de naissance " + "\t Sexe " + "\t Classeement ")
 		for joueur in result:
 			print(str(joueur.doc_id) + "\t" +joueur["lastname"] + "\t\t" + joueur["firstname"] + "\t\t" + joueur["birthDate"] + "\t\t" + joueur["sexe"] + "\t\t" + str(joueur["classement"]))
 		print('\n')
+		return tab
 
 	def listJoueurDisplayFind(self):
 		print('\n')
-		print("Recherchez par :\n'1' Nom \n'2' Prénom \n")
-		sort_on = input()
-		User = Query()
-		db = TinyDB('chess/Models/bdd/db.json')
-		joueurTable = db.table('Joueurs')
-		key_dict = ""
-		if sort_on == '1':
-			key_dict = "lastname"
-			print("Entrez le nom du joueuer")
-		if sort_on == '2':
-			key_dict = "firstname"
-			print("Entrez le prénom du joueuer")
-		if sort_on == 'menu':
-			return False
-		if key_dict:
-			tab = list(joueurTable.search(User[key_dict] == input().capitalize()))
-			i = 1
-			print("N°" + "\t Nom "  + "\t Prénom " + "\t Date de naissance " + "\t Sexe " + "\t Classeement ")
-			for joueur in tab:
-				print(str(joueur.doc_id) + "\t" +joueur["lastname"] + "\t\t" + joueur["firstname"] + "\t\t" + joueur["birthDate"] + "\t\t" + joueur["sexe"] + "\t\t" + str(joueur["classement"]))
-			print('\n')
-			return tab
+		search = True
+		while search:
+			print("Recherchez par :\n'1' Nom \n'2' Prénom \n")
+			sort_on = input()
+			User = Query()
+			db = TinyDB('chess/Models/bdd/db.json')
+			joueurTable = db.table('Joueurs')
+			key_dict = ""
+			if sort_on == '1':
+				key_dict = "lastname"
+				print("Entrez le nom du joueuer")
+			if sort_on == '2':
+				key_dict = "firstname"
+				print("Entrez le prénom du joueuer")
+			if sort_on == 'menu':
+				search = False
+			if key_dict:
+				tab = list(joueurTable.search(User[key_dict] == input().capitalize()))
+				i = 1
+				print("N°" + "\t Nom "  + "\t Prénom " + "\t Date de naissance " + "\t Sexe " + "\t Classeement ")
+				for joueur in tab:
+					print(str(joueur.doc_id) + "\t" +joueur["lastname"] + "\t\t" + joueur["firstname"] + "\t\t" + joueur["birthDate"] + "\t\t" + joueur["sexe"] + "\t\t" + str(joueur["classement"]))
+				print('\n')
