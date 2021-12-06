@@ -48,7 +48,7 @@ class JoueursVues:
 			decorated = [(dict_[key_dict], dict_) for dict_ in tab]
 			decorated.sort(reverse=True)
 			result = [dict_ for (key, dict_) in decorated]
-			print("N°" + "\t Nom "  + "\t Prénom " + "\t Date de naissance " + "\t Sexe " + "\t Classeement ")
+		print("N°" + "\t Nom "  + "\t Prénom " + "\t Date de naissance " + "\t Sexe " + "\t Classeement ")
 		for joueur in result:
 			print(str(joueur.doc_id) + "\t" +joueur["lastname"] + "\t\t" + joueur["firstname"] + "\t\t" + joueur["birthDate"] + "\t\t" + joueur["sexe"] + "\t\t" + str(joueur["classement"]))
 		print('\n')

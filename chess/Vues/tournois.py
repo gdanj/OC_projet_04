@@ -1,5 +1,6 @@
 from chess.Controleurs.tournois import TournoisControleurs
 from chess.Vues.joueurs import JoueursVues
+from tinydb import TinyDB
 
 class TournoisVues:
 	def formAddTournois(self):
@@ -28,19 +29,40 @@ class TournoisVues:
 					findJoueur.listJoueurDisplayFind()
 					continue
 				if choix == "1":
-					list_joueurs_tournois.append(int(input()))
+					print("Entrez le numero du joueur")
+					idJoueur = input().strip()
+					db = TinyDB('chess/Models/bdd/db.json')
+					joueurTable = db.table('Joueurs')
+					print(joueurTable.get(doc_id=3))
+					if joueurTable.contains(doc_id=int(idJoueur)):
+						if int(idJoueur) in list_joueurs_tournois:
+							print("Le joueur n°" + idJoueur + " est déjà dans la liste")
+							continue
+						else:
+							list_joueurs_tournois.append(int(idJoueur))
+							break
+					else:
+						print("Le joueur N°" + idJoueur + " n'est pas dans la base de donnée")
 				if choix == "3":
 					newDisplay = JoueursVues()
 					newDisplay.listJoueurDisplay()
 				if choix == "menu":
 					return False
 		print("Pour retourner au menu principal, entrez 'menu' \nEntrez le type de tournois :\t 'bullet', 'blitz' ou 'coup rapide'")
-		typeTournois = input()
+		typeTournois = input().strip()
 		if typeTournois == "menu":
+			return False
+		print("Pour retourner au menu principal, entrez 'menu' \nEntrez le nombre de tours, entre 4 nim et 7 max")
+		nbTours = input().strip()
+		if nbTours == "menu":
 			return False
 		print("Pour retourner au menu principal, entrez 'menu' \nEntrez la description du tournois")
 		description = input()
 		if description == "menu":
 			return False
 		newTournois = TournoisControleurs()
-		newTournois.add(name, lieu, list_joueurs_tournois, typeTournois, description)
+		print(name, lieu, list_joueurs_tournois, typeTournois, description)
+		newTournois.add(name, lieu, list_joueurs_tournois, typeTournois, int(nbTours), description)
+
+
+	

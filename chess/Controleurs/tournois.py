@@ -8,11 +8,11 @@ class TournoisControleurs:
 				return False
 		return True
 
-	def add(self, name, lieu, list_joueurs_tournois, typeTournois, description):
-		verif = name and lieu and list_joueurs_tournois and typeTournois and description
+	def add(self, name, lieu, list_joueurs_tournois, typeTournois, nbTours, description):
+		verif = name and lieu and list_joueurs_tournois and typeTournois and nbTours and description
 		if verif:
 			newJoueur = TournoisModels()
-			newJoueur.create(name, lieu, list_joueurs_tournois, typeTournois, description)
+			newJoueur.create(name, lieu, list_joueurs_tournois, typeTournois, nbTours, description)
 			return True
 		else:
 			return False
