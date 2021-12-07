@@ -33,7 +33,7 @@ class TournoisVues:
 					idJoueur = input().strip()
 					db = TinyDB('chess/Models/bdd/db.json')
 					joueurTable = db.table('Joueurs')
-					print(joueurTable.get(doc_id=3))
+					print(joueurTable.get(doc_id=int(idJoueur)))
 					if joueurTable.contains(doc_id=int(idJoueur)):
 						if int(idJoueur) in list_joueurs_tournois:
 							print("Le joueur n°" + idJoueur + " est déjà dans la liste")
@@ -64,5 +64,11 @@ class TournoisVues:
 		print(name, lieu, list_joueurs_tournois, typeTournois, description)
 		newTournois.add(name, lieu, list_joueurs_tournois, typeTournois, int(nbTours), description)
 
-
-	
+	def listTournoisDisplay(self):
+		list_tournois = TournoisControleurs()
+		print('\n')
+		tab = list_tournois.tournois_all()
+		print("N°" + "\t Nom "  + "\t Lieu" + "\t Date de début" + "\t date de fin")
+		for tournois in tab:
+			print(str(tournois.doc_id) + "\t" + tournois["name"] + "\t" + tournois["lieu"] + "\t" + tournois["dataTournois"] + "\t" + tournois["dateFinTournois"])
+		print('\n')

@@ -9,6 +9,7 @@ def menu():
 		print("Entrez '1' pour afficher la liste des joueur")
 		print("Entrez '2' pour ajouter un joueur")
 		print("Entrez '3' pour créer un tournois")
+		print("Entrez '4' afficher la liste des tournois")
 		print("Entrez 'exit' pour quitter le programme")
 		commande = input()
 		if commande == '1':
@@ -17,6 +18,8 @@ def menu():
 			newJoueurs.formAddJoueur()
 		if commande == '3':
 			newTournois.formAddTournois()
+		if commande == '4':
+			newTournois.listTournoisDisplay()
 		if commande == 'exit':
 			break
 menu()

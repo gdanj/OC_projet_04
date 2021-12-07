@@ -17,6 +17,6 @@ class TournoisControleurs:
 		else:
 			return False
 
-	def joueur_all(self):
+	def tournois_all(self):
 		listTournois = TournoisModels()
 		return listTournois.allTournois()
