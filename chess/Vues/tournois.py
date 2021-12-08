@@ -1,6 +1,6 @@
 from chess.Controleurs.tournois import TournoisControleurs
 from chess.Vues.joueurs import JoueursVues
-from tinydb import TinyDB
+from tinydb import TinyDB, Query
 
 class TournoisVues:
 	def formAddTournois(self):
@@ -68,7 +68,41 @@ class TournoisVues:
 		list_tournois = TournoisControleurs()
 		print('\n')
 		tab = list_tournois.tournois_all()
+		db = TinyDB('chess/Models/bdd/db.json')
+		joueurTable = db.table('Tournois')
 		print("N°" + "\t Nom "  + "\t Lieu" + "\t Date de début" + "\t date de fin")
 		for tournois in tab:
 			print(str(tournois.doc_id) + "\t" + tournois["name"] + "\t" + tournois["lieu"] + "\t" + tournois["dataTournois"] + "\t" + tournois["dateFinTournois"])
 		print('\n')
+		while True:
+			print("Entrez l'ID du tournois que vous souhaitez sélection\nEntrez 'menu' pour retourner au menu principal")
+			choix = input()
+			if joueurTable.contains(doc_id=int(choix)):
+				self.tournoisSuisse(choix)
+			if choix == 'menu':
+				break
+			
+
+
+	def	tourInit(self, current_tournois, tab_joueur):
+		db = TinyDB('chess/Models/bdd/db.json')
+		User = Query()
+		joueurTable = db.table('Joueurs')
+		tournoisTable = db.table('Tournois')
+		for joueur_id in tab_joueur:
+			current_tournois['listTour'][joueur_id] = {
+				'classement' : joueurTable.get(doc_id=int(joueur_id))['classement'],
+				'point' : 0
+			}
+		tournoisTable.update({'listTour' : current_tournois['listTour']}, User.name == current_tournois['name'])
+		tournoisTable.update({'currentTour' : 1}, User.name == current_tournois['name'])
+
+	def tournoisSuisse(self, tournois_id):
+		db = TinyDB('chess/Models/bdd/db.json')
+		joueurTable = db.table('Tournois')
+		current_tournois = joueurTable.get(doc_id=int(tournois_id))
+		tab_joueur = current_tournois["list_joueurs_tournois"]
+		if current_tournois['currentTour'] == 0:
+			self.tourInit(current_tournois, tab_joueur)
+		elif current_tournois['currentTour'] < current_tournois['nbToursMax']:
+			self.tourNext(current_tournois, tab_joueur)

@@ -21,8 +21,10 @@ class TournoisModels:
 			'dataTournois' : self.dateDebutTournois,
 			'dateFinTournois' : self.dateFinTournois,
 			'list_joueurs_tournois' : self.list_joueurs_tournois,
+			'listTour' : {},
 			'typeTournois' : self.typeTournois,
-			'nbTours' : self.nbTours,
+			'nbToursMax' : self.nbTours,
+			'currentTour' : 0,
 			'description' : self.description
 		})
 
