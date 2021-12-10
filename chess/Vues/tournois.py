@@ -106,14 +106,11 @@ class TournoisVues:
 		tab2 = [dict_['classement'] for dict_ in list(current_tournois['infoJoueur'])]
 		tab2.sort(reverse=True)
 		result = []
-		i = 0
 		for nbr in tab2:
 			for t in tab:
 				if nbr == t[0]:
 					if not t[1] in result:
 						result.append(t[1])
-			i += 1
-		print(result)
 		current_tournois['listTour'].append({
 			"id": 1,
 			"tour": [
@@ -126,6 +123,44 @@ class TournoisVues:
 		})
 		tournoisTable.update({'infoJoueur' : result}, User.name == current_tournois['name'])
 		tournoisTable.update({'listTour' : current_tournois['listTour']}, User.name == current_tournois['name'])
+
+	def tourNextSort(self, current_tournois):
+		db = TinyDB('chess/Models/bdd/db.json')
+		User = Query()
+		tournoisTable = db.table('Tournois')
+		infoJoueurList = [[dict_['point'], dict_['classement'], dict_] for dict_ in current_tournois['infoJoueur']]
+		tabPoint = [dict_['point'] for dict_ in current_tournois['infoJoueur']]
+		tabPoint.sort(reverse=True)
+		resultSortByPoint = []
+		for nbr in tabPoint:
+			for infoJoueur in infoJoueurList:
+				if nbr == infoJoueur[0]:
+					if not infoJoueur in resultSortByPoint:
+						resultSortByPoint.append(infoJoueur)
+		i = 0
+		result = []
+		while i < 7:
+			if resultSortByPoint[i][0] == resultSortByPoint[i + 1][0] and resultSortByPoint[i][1] < resultSortByPoint[i + 1][1]:
+				swap = resultSortByPoint[i]
+				resultSortByPoint[i] = resultSortByPoint[i + 1]
+				resultSortByPoint[i + 1] = swap
+				i = 0
+			i += 1
+		for res in resultSortByPoint:
+			result.append(res[2])
+		print(result)
+		"""current_tournois['listTour'].append({
+			"id": 1,
+			"tour": [
+				{"match": [result[0]['id'], result[4]['id']], "score": [0, 0], "end": False},
+				{"match": [result[1]['id'], result[5]['id']], "score": [0, 0], "end": False},
+				{"match": [result[2]['id'], result[6]['id']], "score": [0, 0], "end": False},
+				{"match": [result[3]['id'], result[7]['id']], "score": [0, 0], "end": False}
+			],
+			"tourEnd": False
+		})
+		tournoisTable.update({'infoJoueur' : result}, User.name == current_tournois['name'])
+		tournoisTable.update({'listTour' : current_tournois['listTour']}, User.name == current_tournois['name'])"""
 	
 	def	displayRoundAll(self, current_tournois):
 		current_tournois
@@ -243,4 +278,4 @@ class TournoisVues:
 		if current_tournois['listTour'][-1]["tourEnd"] == False:
 			self.displayRoundAll(current_tournois)
 		elif int(current_tournois['currentTour']) < int(current_tournois['nbToursMax']):
-			self.tourNext(current_tournois)
+			self.tourNextSort(current_tournois)
