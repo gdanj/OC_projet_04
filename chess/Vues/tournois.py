@@ -88,10 +88,12 @@ class TournoisVues:
 		joueurTable = db.table('Joueurs')
 		tournoisTable = db.table('Tournois')
 		for joueur_id in tab_joueur:
+			print(joueur_id)
 			current_tournois['infoJoueur'].append({
 				'id' : joueur_id,
 				'classement' : joueurTable.get(doc_id=int(joueur_id))['classement'],
-				'point' : 0
+				'point' : 0,
+				"history" : []
 			})
 		tournoisTable.update({'infoJoueur' : current_tournois['infoJoueur']}, User.name == current_tournois['name'])
 		tournoisTable.update({'currentTour' : 1}, User.name == current_tournois['name'])
@@ -108,8 +110,10 @@ class TournoisVues:
 		for nbr in tab2:
 			for t in tab:
 				if nbr == t[0]:
-					result.append(t[1])
+					if not t[1] in result:
+						result.append(t[1])
 			i += 1
+		print(result)
 		current_tournois['listTour'].append({
 			"id": 1,
 			"tour": [
@@ -159,7 +163,23 @@ class TournoisVues:
 					print("Le match N°" + str(choix) + " est cloturé")
 				else:
 					self.addResult(current_tournois, roundId, int(choix) - 1)
-					
+
+	def updateInfoJoueur(self, current_tournois):
+		db = TinyDB('chess/Models/bdd/db.json')
+		User = Query()
+		tournoisTable = db.table('Tournois')
+		joueurTable = db.table('Joueurs')
+		matchList = current_tournois["listTour"][-1]["tour"]
+		infoJoueurList = current_tournois["infoJoueur"]
+		for match in matchList:
+			for i in range(8):
+				if match["match"][0] == infoJoueurList[i]["id"]:
+					infoJoueurList[i]["point"] += match["score"][0]
+					infoJoueurList[i]["history"].append(match["match"][1])
+				if match["match"][1] == infoJoueurList[i]["id"]:
+					infoJoueurList[i]["point"] += match["score"][1]
+					infoJoueurList[i]["history"].append(match["match"][0])
+		tournoisTable.update({'infoJoueur' : current_tournois["infoJoueur"]}, User.name == current_tournois['name'])
 
 	def addResult(self, current_tournois, roundId, matchId):
 		db = TinyDB('chess/Models/bdd/db.json')
@@ -196,6 +216,7 @@ class TournoisVues:
 					matchDict["tourEnd"] = matchDict["tour"][0]["end"] and matchDict["tour"][1]["end"] and matchDict["tour"][2]["end"] and matchDict["tour"][3]["end"]
 					if matchDict["tourEnd"]:
 						tournoisTable.update({'currentTour' : current_tournois["currentTour"] + 1}, User.name == current_tournois['name'])
+						self.updateInfoJoueur(current_tournois)
 					tournoisTable.update({'listTour' : current_tournois["listTour"]}, User.name == current_tournois['name'])
 					print("Match cloturé\n")
 					break
@@ -203,6 +224,9 @@ class TournoisVues:
 					continue
 			else:
 				continue
+	
+	def	tourNext(self, current_tournois):
+		pass
 
 	def tournoisSuisse(self, tournois_id):
 		db = TinyDB('chess/Models/bdd/db.json')
@@ -211,7 +235,10 @@ class TournoisVues:
 		tab_joueur = current_tournois["list_joueurs_tournois"]
 		if current_tournois['currentTour'] == 0:
 			self.tourInit(current_tournois, tab_joueur)
-		if current_tournois['currentTour'] == 1 and len(current_tournois['listTour']) == 0:
+		db = TinyDB('chess/Models/bdd/db.json')
+		joueurTable = db.table('Tournois')
+		current_tournois = joueurTable.get(doc_id=int(tournois_id))
+		if current_tournois['currentTour'] == 1 and current_tournois['listTour'] == []:
 			self.firstRound(current_tournois)
 		if current_tournois['listTour'][-1]["tourEnd"] == False:
 			self.displayRoundAll(current_tournois)

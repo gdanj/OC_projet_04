@@ -67,124 +67,76 @@
     "Tournois": {
         "1": {
             "name": "Paris",
-            "lieu": "Paris 5",
-            "dataTournois": "08/12/2021",
+            "lieu": "Paris 15",
+            "dataTournois": "09/12/2021",
             "dateFinTournois": "En cours",
             "list_joueurs_tournois": [1, 2, 3, 4, 5, 6, 7, 8],
             "listTour": [{
                 "id": 1,
                 "tour": [{
                     "match": [8, 3],
-                    "score": [0, 1],
+                    "score": [0.5, 0.5],
                     "end": true
                 }, {
                     "match": [7, 2],
-                    "score": [0, 1],
+                    "score": [1, 0],
                     "end": true
                 }, {
                     "match": [4, 5],
                     "score": [0, 1],
                     "end": true
                 }, {
-                    "match": [6, 2],
-                    "score": [0, 1],
+                    "match": [6, 1],
+                    "score": [0.5, 0.5],
                     "end": true
                 }],
                 "tourEnd": true
             }],
             "infoJoueur": [{
-                "id": 8,
-                "classement": 9,
-                "point": 0
+                "id": 1,
+                "classement": 0,
+                "point": 0.5,
+                "history": [6]
             }, {
-                "id": 7,
-                "classement": 7,
-                "point": 0
-            }, {
-                "id": 4,
-                "classement": 5,
-                "point": 0
-            }, {
-                "id": 6,
-                "classement": 3,
-                "point": 0
+                "id": 2,
+                "classement": 1,
+                "point": 0,
+                "history": [7]
             }, {
                 "id": 3,
                 "classement": 2,
-                "point": 0
+                "point": 0.5,
+                "history": [8]
             }, {
-                "id": 2,
-                "classement": 1,
-                "point": 0
-            }, {
-                "id": 5,
-                "classement": 1,
-                "point": 0
-            }, {
-                "id": 2,
-                "classement": 1,
-                "point": 0
+                "id": 4,
+                "classement": 5,
+                "point": 0,
+                "history": [5]
             }, {
                 "id": 5,
                 "classement": 1,
-                "point": 0
+                "point": 1,
+                "history": [4]
             }, {
-                "id": 2,
-                "classement": 1,
-                "point": 0
+                "id": 6,
+                "classement": 3,
+                "point": 0.5,
+                "history": [1]
             }, {
-                "id": 5,
-                "classement": 1,
-                "point": 0
+                "id": 7,
+                "classement": 7,
+                "point": 1,
+                "history": [2]
             }, {
-                "id": 2,
-                "classement": 1,
-                "point": 0
-            }, {
-                "id": 5,
-                "classement": 1,
-                "point": 0
-            }, {
-                "id": 2,
-                "classement": 1,
-                "point": 0
-            }, {
-                "id": 5,
-                "classement": 1,
-                "point": 0
-            }, {
-                "id": 2,
-                "classement": 1,
-                "point": 0
-            }, {
-                "id": 5,
-                "classement": 1,
-                "point": 0
-            }, {
-                "id": 2,
-                "classement": 1,
-                "point": 0
-            }, {
-                "id": 5,
-                "classement": 1,
-                "point": 0
-            }, {
-                "id": 2,
-                "classement": 1,
-                "point": 0
-            }, {
-                "id": 5,
-                "classement": 1,
-                "point": 0
-            }, {
-                "id": 1,
-                "classement": 0,
-                "point": 0
+                "id": 8,
+                "classement": 9,
+                "point": 0.5,
+                "history": [3]
             }],
             "typeTournois": "Bullet",
             "nbToursMax": 6,
-            "currentTour": 3,
-            "description": "Le premier tournois de Paris 5"
+            "currentTour": 2,
+            "description": "1er tournois de la ville de Paris"
         }
     }
 }
