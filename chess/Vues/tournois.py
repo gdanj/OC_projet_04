@@ -35,24 +35,23 @@ class TournoisVues:
 				result += RED + listText[i] + RESET
 			else:
 				result += listText[i]
+		print(result)
 
 
 	def formAddTournois(self):
-		print("Pour retourner au menu principal, entrez ''menu'' \nEntrez le nom du tournois")
+		self.printText("Pour retourner au menu principal, entrez ''menu'' \nEntrez le nom du tournois")
 		name = input()
 		if name == "menu":
 			return False
-		print("Pour retourner au menu principal, entrez ''menu'' \nEntrez le lieu du tournois")
+		self.printText("Pour retourner au menu principal, entrez ''menu'' \nEntrez le lieu du tournois")
 		lieu = input()
 		if lieu == "menu":
 			return False
-		print("Pour retourner au menu principal, entrez ''menu''")
-		print("Vous devez ajouter 8 joueurs")
+		self.printText("Pour retourner au menu principal, entrez ''menu''\nVous devez ajouter 8 joueurs")
 		list_joueurs_tournois = []
 		for i in range(8):
 			while True:
-				print("joueur n° " + str(i + 1))
-				print("\nEntrez ''1'' pour ajouter l'ID d'un joueur\nEntrez ''2'' pour rechercher l'ID un joueur\nEntre ''3'' pour afficher la liste complète\nEntrez ''4'' pour ajouté un nouveau joueur à la base de donnée")
+				self.printText("joueur n° " + str(i + 1) + "\nEntrez ''1'' pour ajouter l'ID d'un joueur\nEntrez ''2'' pour rechercher l'ID un joueur\nEntre ''3'' pour afficher la liste complète\nEntrez ''4'' pour ajouté un nouveau joueur à la base de donnée")
 				choix = input()
 				if choix == "4":
 					newJoueur = JoueursVues()
@@ -63,32 +62,30 @@ class TournoisVues:
 					findJoueur.listJoueurDisplayFind()
 					continue
 				if choix == "1":
-					print("Entrez le numero du joueur")
+					self.printText("Entrez le numero du joueur")
 					idJoueur = input().strip()
 					db = TinyDB('chess/Models/bdd/db.json')
 					joueurTable = db.table('Joueurs')
-					print(joueurTable.get(doc_id=int(idJoueur)))
 					if joueurTable.contains(doc_id=int(idJoueur)):
 						if int(idJoueur) in list_joueurs_tournois:
-							print("Le joueur n°''" + idJoueur + "'' est déjà dans la liste")
+							self.printText("Le joueur n°''" + idJoueur + "'' est déjà dans la liste")
 							continue
 						else:
 							list_joueurs_tournois.append(int(idJoueur))
 							break
 					else:
-						print("Le joueur N°''" + idJoueur + "'' n'est pas dans la base de donnée")
+						self.printText("Le joueur N°''" + idJoueur + "'' n'est pas dans la base de donnée")
 				if choix == "3":
 					newDisplay = JoueursVues()
 					newDisplay.listJoueurDisplay()
 				if choix == "menu":
 					return False
-		print("Pour retourner au menu principal, entrez ''menu'' \nEntrez le type de tournois :\t 'bullet', 'blitz' ou 'coup rapide'")
+		self.printText("Pour retourner au menu principal, entrez ''menu'' \nEntrez le type de tournois :\t 'bullet', 'blitz' ou 'coup rapide'")
 		typeTournois = input().strip()
 		list_joueurs_tournois = []
 		for i in range(8):
 			while True:
-				print("joueur n° " + str(i + 1))
-				print("\nEntrez ''1'' pour ajouter l'ID d'un joueur\nEntrez ''2'' pour rechercher l'ID un joueur\nEntre ''3'' pour afficher la liste complète\nEntrez ''4'' pour ajouté un nouveau joueur à la base de donnée")
+				self.printText("joueur n° " + str(i + 1) + "\nEntrez ''1'' pour ajouter l'ID d'un joueur\nEntrez ''2'' pour rechercher l'ID un joueur\nEntre ''3'' pour afficher la liste complète\nEntrez ''4'' pour ajouté un nouveau joueur à la base de donnée")
 				choix = input()
 				if choix == "4":
 					newJoueur = JoueursVues()
@@ -99,20 +96,19 @@ class TournoisVues:
 					findJoueur.listJoueurDisplayFind()
 					continue
 				if choix == "1":
-					print("Entrez le numero du joueur")
+					self.printText("Entrez le numero du joueur")
 					idJoueur = input().strip()
 					db = TinyDB('chess/Models/bdd/db.json')
 					joueurTable = db.table('Joueurs')
-					print(joueurTable.get(doc_id=TournoisControleursint(idJoueur)))
 					if joueurTable.contains(doc_id=int(idJoueur)):
 						if int(idJoueur) in list_joueurs_tournois:
-							print("Le joueur n°" + idJoueur + " est déjà dans la liste")
+							self.printText("Le joueur n°" + idJoueur + " est déjà dans la liste")
 							continue
 						else:
 							list_joueurs_tournois.append(int(idJoueur))
 							break
 					else:
-						print("Le joueur N°" + idJoueur + " n'est pas dans la base de donnée")
+						self.printText("Le joueur N°" + idJoueur + " n'est pas dans la base de donnée")
 				if choix == "3":
 					newDisplay = JoueursVues()
 					newDisplay.listJoueurDisplay()
@@ -120,30 +116,30 @@ class TournoisVues:
 					return False
 		if typeTournois == "menu":
 			return False
-		print("Pour retourner au menu principal, entrez ''menu'' \nEntrez le nombre de tours, entre ''4'' nim et ''7'' max")
+		self.printText("Pour retourner au menu principal, entrez ''menu'' \nEntrez le nombre de tours, entre ''4'' nim et ''7'' max")
 		nbTours = input().strip()
 		if nbTours == "menu":
 			return False
-		print("Pour retourner au menu principal, entrez ''menu''\nEntrez la description du tournois")
+		self.printText("Pour retourner au menu principal, entrez ''menu''\nEntrez la description du tournois")
 		description = input()
 		if description == "menu":
 			return False
 		newTournois = TournoisControleurs()
-		print(name, lieu, list_joueurs_tournois, typeTournois, description)
+		self.printText(name, lieu, list_joueurs_tournois, typeTournois, description)
 		newTournois.add(name, lieu, list_joueurs_tournois, typeTournois, int(nbTours), description)
 
 	def listTournoisDisplay(self):
 		list_tournois = TournoisControleurs()
-		print('\n')
+		self.printText('\n')
 		tab = list_tournois.tournois_all()
 		db = TinyDB('chess/Models/bdd/db.json')
 		joueurTable = db.table('Tournois')
-		print("N°" + "\t Nom "  + "\t Lieu" + "\t Date de début" + "\t date de fin")
+		self.printText("N°" + "\t Nom "  + "\t Lieu" + "\t Date de début" + "\t date de fin")
 		for tournois in tab:
-			print(str(tournois.doc_id) + "\t" + tournois["name"] + "\t" + tournois["lieu"] + "\t" + tournois["dataTournois"] + "\t" + tournois["dateFinTournois"])
-		print('\n')
+			self.printText(str(tournois.doc_id) + "\t" + tournois["name"] + "\t" + tournois["lieu"] + "\t" + tournois["dataTournois"] + "\t" + tournois["dateFinTournois"])
+		self.printText('\n')
 		while True:
-			print("Entrez l'ID du tournois que vous souhaitez sélection\nEntrez 'menu' pour retourner au menu principal")
+			self.printText("Entrez l'ID du tournois que vous souhaitez sélection\nEntrez 'menu' pour retourner au menu principal")
 			choix = input()
 			if joueurTable.contains(doc_id=int(choix)):
 				self.tournoisSuisse(choix)
@@ -156,7 +152,7 @@ class TournoisVues:
 		joueurTable = db.table('Joueurs')
 		tournoisTable = db.table('Tournois')
 		for joueur_id in tab_joueur:
-			print(joueur_id)
+			self.printText(joueur_id)
 			current_tournois['infoJoueur'].append({
 				'id' : joueur_id,
 				'classement' : joueurTable.get(doc_id=int(joueur_id))['classement'],
@@ -275,7 +271,7 @@ class TournoisVues:
 		print(current_tournois["name"])
 		print(current_tournois["lieu"])
 		for round in current_tournois["listTour"]:
-			print("Tour " + str(round["id"]) + " Statut " + ("Terminé" if round["tourEnd"] else "En cours"))
+			self.printText("Tour ''" + str(round["id"]) + "'' Statut " + ("Terminé" if round["tourEnd"] else "En cours"))
 		print("Entrez le numéro du tour que vous souhaitez séletionner\n")
 		choix = input().strip()
 		if choix == "menu":
@@ -286,7 +282,7 @@ class TournoisVues:
 	def	displayRound(self, current_tournois, roundId):
 		print(current_tournois["name"])
 		print(current_tournois["lieu"])
-		print("Round N°" + str(roundId + 1) + "\n")
+		self.printText("Round N°''" + str(roundId + 1) + "''\n")
 		db = TinyDB('chess/Models/bdd/db.json')
 		joueurTable = db.table('Joueurs')
 		matchDict = current_tournois["listTour"][roundId]
@@ -294,7 +290,7 @@ class TournoisVues:
 		while not menu and not matchDict["tourEnd"]:
 			i = 1
 			for match in matchDict["tour"]:
-				print("match : " + str(i) + "\n" + str(joueurTable.get(doc_id=match["match"][0])["firstname"]) + " vs " + str(joueurTable.get(doc_id=match["match"][1])["lastname"]))
+				self.printText("match : ''" + str(i) + "''\n" + str(joueurTable.get(doc_id=match["match"][0])["firstname"]) + " vs " + str(joueurTable.get(doc_id=match["match"][1])["lastname"]))
 				print("Score : " + str(match["score"][0]) + " " + str(match["score"][1]) + "\t\t" + " Statut " + ("Terminé" if match["end"] else "En cours") + "\n\n")
 				i += 1
 			print("Entrez le numéro du match que vous souhaitez cloturé\n")
@@ -332,9 +328,9 @@ class TournoisVues:
 		matchDict = current_tournois["listTour"][roundId]
 		match = matchDict["tour"][matchId]
 		while True:
-			print("Entrez ''0'' si le résultat du macht est nul")
-			print("Entrez ''1'' si " + str(joueurTable.get(doc_id=match["match"][0])["firstname"]) + " " + str(joueurTable.get(doc_id=match["match"][0])["lastname"]) + " a ganié")
-			print("Entrez ''2'' si " + str(joueurTable.get(doc_id=match["match"][1])["firstname"]) + " " + str(joueurTable.get(doc_id=match["match"][1])["lastname"]) + " a ganié")
+			self.printText("Entrez ''0'' si le résultat du macht est nul")
+			self.printText("Entrez ''1'' si " + str(joueurTable.get(doc_id=match["match"][0])["firstname"]) + " " + str(joueurTable.get(doc_id=match["match"][0])["lastname"]) + " a ganié")
+			self.printText("Entrez ''2'' si " + str(joueurTable.get(doc_id=match["match"][1])["firstname"]) + " " + str(joueurTable.get(doc_id=match["match"][1])["lastname"]) + " a ganié")
 			choix = input().strip()
 			if choix == "menu":
 				break
@@ -348,7 +344,7 @@ class TournoisVues:
 				if choix == "2":
 					match["score"][0] = 0
 					match["score"][1] = 1
-				print("match : " + str(matchId) + "\n" + str(joueurTable.get(doc_id=match["match"][0])["firstname"]) + " vs " + str(joueurTable.get(doc_id=match["match"][1])["firstname"]))
+				self.printText("match : ''" + str(matchId) + "''\n" + str(joueurTable.get(doc_id=match["match"][0])["firstname"]) + " vs " + str(joueurTable.get(doc_id=match["match"][1])["firstname"]))
 				print("Score : " + str(match["score"][0]) + " " + str(match["score"][1]) + "\t\t" + " Statut " + ("Terminé" if match["end"] else "En cours") + "\n\n")
 				print("Vous souhaitez concerver ces données et cloturer le matche ?\nEntrez ''Oui'' ou ''Non''")
 				choix = input().strip()
