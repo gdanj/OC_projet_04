@@ -2,13 +2,26 @@ from tinydb import TinyDB, Query
 
 
 class TournoisModels:
-	def __init__(self):
-		self.db = TinyDB('chess/Models/bdd/db.json')
-		self.query = Query()
+	
+	def queryDB(self):
+		return Query()
 
 	def tournoisDB(self):
 		db = TinyDB('chess/Models/bdd/db.json')
 		return db.table('Tournois')
+
+	def playerDB(self):
+		db = TinyDB('chess/Models/bdd/db.json')
+		return db.table('Joueurs')
+
+	def allTournois(self):
+		Tournois = self.tournoisDB()
+		return Tournois.all()
+
+	def updateTournoisDB(self, current_tournois, key):
+		tournoisTable = self.tournoisDB()
+		query = self.queryDB()
+		tournoisTable.update({key : current_tournois[key]}, query.name == current_tournois['name'])
 	
 	def create(self, name, lieu, list_joueurs_tournois, typeTournois, nbTours, description):
 		Tournois = self.tournoisDB()
@@ -36,14 +49,9 @@ class TournoisModels:
 			'currentTour' : 0,
 			'description' : self.description
 		})
-
-	def allTournois(self):
-		Tournois = self.tournoisDB()
-		return Tournois.all()
-
+		
 	def	tourInit(self, current_tournois, tab_joueur):
-		joueurTable = self.db.table('Joueurs')
-		tournoisTable = self.tournoisDB()
+		joueurTable = self.playerDB()
 		for joueur_id in tab_joueur:
 			current_tournois['infoJoueur'].append({
 				'id' : joueur_id,
@@ -52,8 +60,8 @@ class TournoisModels:
 				"history" : []
 			})
 		current_tournois['currentTour'] += 1
-		tournoisTable.update({'infoJoueur' : current_tournois['infoJoueur']}, self.query.name == current_tournois['name'])
-		tournoisTable.update({'currentTour' : current_tournois['currentTour']}, self.query.name == current_tournois['name'])
+		self.updateTournoisDB(current_tournois, 'infoJoueur')
+		self.updateTournoisDB(current_tournois, 'currentTour')
 
 	def	listPlayerSort(self, current_tournois):
 		tab = [[dict_['classement'], dict_] for dict_ in list(current_tournois['infoJoueur'])]
@@ -65,10 +73,10 @@ class TournoisModels:
 				if nbr == t[0]:
 					if not t[1] in result:
 						result.append(t[1])
+		return result
 
 	def firstRound(self, current_tournois):
 		result = self.listPlayerSort(current_tournois)
-		tournoisTable = self.tournoisDB()
 		current_tournois['listTour'].append({
 			"id": 1,
 			"tour": [
@@ -79,8 +87,8 @@ class TournoisModels:
 			],
 			"tourEnd": False
 		})
-		tournoisTable.update({'infoJoueur' : result}, self.query.name == current_tournois['name'])
-		tournoisTable.update({'listTour' : current_tournois['listTour']}, self.query.name == current_tournois['name'])
+		self.updateTournoisDB(current_tournois, 'infoJoueur')
+		self.updateTournoisDB(current_tournois, 'listTour')
 
 	def cleanTour(self, tour):
 		i = 0
@@ -141,7 +149,6 @@ class TournoisModels:
 		return resultSortByPoint
 
 	def tourNextSort(self, current_tournois):
-		tournoisTable = self.tournoisDB()
 		resultSortByPoint = self.listSortPlayer(current_tournois)
 		result = [list_[2] for list_ in resultSortByPoint]
 		tabId = [dict_['id'] for dict_ in result]
@@ -154,17 +161,22 @@ class TournoisModels:
 				{"match": [tour[4], tour[5]], "score": [0, 0], "end": False},
 				{"match": [tour[6], tour[7]], "score": [0, 0], "end": False}
 			]
-		current_tournois["currentTour"] += 1
 		current_tournois['listTour'].append({
 			"id": current_tournois['currentTour'],
 			"tour": listTour,
 			"tourEnd": False
 		})
-		tournoisTable.update({'infoJoueur' : result}, self.query.name == current_tournois['name'])
-		tournoisTable.update({'listTour' : current_tournois['listTour']}, self.query.name == current_tournois['name'])
+		self.updateTournoisDB(current_tournois, 'infoJoueur')
+		self.updateTournoisDB(current_tournois, 'listTour')
+	
+	def lastround(self, current_tournois):
+		from datetime import date
+		today = date.today()
+		current_tournois['dateFinTournois'] = today.strftime("%d/%m/%Y")
+		self.updateTournoisDB(current_tournois, 'dateFinTournois')
+		self.updateInfoJoueur(current_tournois)
 
 	def updateInfoJoueur(self, current_tournois):
-		tournoisTable = self.tournoisDB()
 		matchList = current_tournois["listTour"][-1]["tour"]
 		infoJoueurList = current_tournois["infoJoueur"]
 		for match in matchList:
@@ -175,4 +187,4 @@ class TournoisModels:
 				if match["match"][1] == infoJoueurList[i]["id"]:
 					infoJoueurList[i]["point"] += match["score"][1]
 					infoJoueurList[i]["history"].append(match["match"][0])
-		tournoisTable.update({'infoJoueur' : current_tournois["infoJoueur"]}, self.query.name == current_tournois['name'])
+		self.updateTournoisDB(current_tournois, 'infoJoueur')

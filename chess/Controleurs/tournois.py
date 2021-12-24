@@ -1,10 +1,6 @@
 from chess.Models.tournois import TournoisModels
-from tinydb import TinyDB, Query
 
 class TournoisControleurs:
-	def __init__(self):
-		self.db = TinyDB('chess/Models/bdd/db.json')
-		self.query = Query()
 	
 	def	testListJoueursTournois(list_joueurs_tournois):
 		for joueur in list_joueurs_tournois:
@@ -24,6 +20,11 @@ class TournoisControleurs:
 	def tournois_all(self):
 		tm = TournoisModels()
 		return tm.allTournois()
+
+	def	getPlayerByID(self, id):
+		tm = TournoisModels()
+		joueurTable = tm.playerDB()
+		return joueurTable.get(doc_id=id)
 
 	def testTypeTournois(self, typeTournois):
 		if typeTournois.isnumeric():
@@ -45,7 +46,8 @@ class TournoisControleurs:
 		return False
 	
 	def testJoueursInBDD(self, idJoueur, list_joueurs_tournois):
-		joueurTable = self.db.table('Joueurs')
+		tm = TournoisModels()
+		joueurTable = tm.playerDB()
 		if joueurTable.contains(doc_id=int(idJoueur)):
 			if int(idJoueur) in list_joueurs_tournois:
 				return 1
@@ -56,17 +58,18 @@ class TournoisControleurs:
 		return 0
 
 	def closeMatch(self, current_tournois, matchDict, match):
-		tournoisTable = self.db.table('Tournois')
+		tm = TournoisModels()
 		match["end"] = True
 		matchDict["tourEnd"] = matchDict["tour"][0]["end"] and matchDict["tour"][1]["end"] and matchDict["tour"][2]["end"] and matchDict["tour"][3]["end"]
 		if matchDict["tourEnd"]:
-			tournoisTable.update({'currentTour' : current_tournois["currentTour"]}, self.query.name == current_tournois['name'])
-			tm = TournoisModels()
+			current_tournois['currentTour'] += 1
+			tm.updateTournoisDB(current_tournois, 'currentTour')
 			tm.updateInfoJoueur(current_tournois)
 		
 
 	def selectTournoix(self, choix):
-		tournoisTable = self.db.table('Tournois')
+		tm = TournoisModels()
+		tournoisTable = tm.tournoisDB()
 		if tournoisTable.contains(doc_id=int(choix)):
 			current_tournois = tournoisTable.get(doc_id=int(choix))
 			self.tournoisSuisse(current_tournois)
@@ -76,7 +79,6 @@ class TournoisControleurs:
 	
 	def tournoisSuisse(self, current_tournois):
 		tm = TournoisModels()
-		tournoisTable = self.db.table('Tournois')
 		tab_joueur = current_tournois["list_joueurs_tournois"]
 		if current_tournois['currentTour'] == 0:
 			tm.tourInit(current_tournois, tab_joueur)
@@ -84,9 +86,10 @@ class TournoisControleurs:
 			tm.firstRound(current_tournois)
 		if int(current_tournois['currentTour']) <= int(current_tournois['nbToursMax']) and current_tournois['listTour'][-1]["tourEnd"] == True:
 			tm.tourNextSort(current_tournois)
-		if int(current_tournois['currentTour']) == int(current_tournois['nbToursMax']):
+		if int(current_tournois['currentTour']) > int(current_tournois['nbToursMax']) and current_tournois['listTour'][-1]["tourEnd"] == True:
 			if (current_tournois['dateFinTournois'] == "En cours"):
+				tm.lastround(current_tournois)
 				from datetime import date
 				today = date.today()
-				d1 = today.strftime("%d/%m/%Y")
-				tournoisTable.update({'dateFinTournois' : d1}, self.query.name == current_tournois['name'])
+				current_tournois['dateFinTournois'] = today.strftime("%d/%m/%Y")
+				tm.updateTournoisDB(current_tournois, 'dateFinTournois')
