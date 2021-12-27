@@ -129,16 +129,32 @@ class TournoisVues:
 					" " + (round["endTime"] if round["tourEnd"] else "En cours"))
 			if current_tournois['currentTour'] != 1:
 				print("Entrez le numéro du tour que vous souhaitez séletionner\n")
+			if current_tournois['currentTour'] > 0:
+				pc.printText("Entrez ''score'' pour afficher le classement")
 			if tc.testNextRound(current_tournois):
 					pc.printText("Entrez ''next'' pour lancer le tour suivant")
 			choix = pc.inputClearScreen()
 			if choix == "next" and tc.testNextRound(current_tournois):
 				tc.tournoisSuisse(current_tournois)
+			if choix == "score" and current_tournois['currentTour'] > 0:
+				self.displayScore(current_tournois)
 			if choix == "menu":
 				break
 			if choix.isnumeric():
 				if int(choix) <= len(current_tournois["listTour"]) and int(choix) >= 1:
 					self.displayRound(current_tournois, int(choix) - 1)
+	
+	def displayScore(self, current_tournois):
+		pc = printCustome()
+		tc = TournoisControleurs()
+		listInfo = tc.getListPlayer(current_tournois)
+		newTable = [["Position", "Nom" , "Prénom", "Date de naissance", "Sexe", "Classeement", "Score", "N°"]]
+		i = 0
+		for info in listInfo:
+			player = tc.getPlayerByID(info['id'])
+			i += 1
+			newTable.append([str(i), player['lastname'], player["firstname"], player["birthDate"], player["sexe"], str(player["classement"]), str(info["point"]), "''" + str(player.doc_id) + "''"])
+		pc.printTable(newTable)
 	
 	def	displayRound(self, current_tournois, roundId):
 		print(current_tournois["name"])

@@ -79,6 +79,11 @@ class TournoisControleurs:
 			return True
 		return int(current_tournois['currentTour']) <= int(current_tournois['nbToursMax']) \
 			and current_tournois['listTour'][-1]["tourEnd"] == True
+
+
+	def getListPlayer(self, current_tournois):
+		tm = TournoisModels()
+		return tm.listSortPlayer(current_tournois)
 	
 	def tournoisSuisse(self, current_tournois):
 		tm = TournoisModels()

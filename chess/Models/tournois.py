@@ -143,33 +143,24 @@ class TournoisModels:
 		self.updateInfoJoueur(current_tournois)
 
 	def	listSortPlayer(self, current_tournois):
-		infoJoueurList = [[dict_['point'], dict_['classement'], dict_] for dict_ in current_tournois['infoJoueur']]
-		tabPoint = [dict_['point'] for dict_ in current_tournois['infoJoueur']]
-		tabPoint.sort(reverse=True)
-		resultSortByPoint = []
-		for nbr in tabPoint:
-			for infoJoueur in infoJoueurList:
-				if nbr == infoJoueur[0]:
-					if not infoJoueur in resultSortByPoint:
-						resultSortByPoint.append(infoJoueur)
+		result = sorted(current_tournois['infoJoueur'], key=lambda x: x['point'], reverse=True)
+		infoJoueurList = [[dict_['point'], dict_['classement'], dict_] for dict_ in result]
 		i = 0
 		while i < 7:
-			if resultSortByPoint[i][0] == resultSortByPoint[i + 1][0] \
-				and resultSortByPoint[i][1] < resultSortByPoint[i + 1][1]:
-				swap = resultSortByPoint[i]
-				resultSortByPoint[i] = resultSortByPoint[i + 1]
-				resultSortByPoint[i + 1] = swap
-				i = 0
+			if result[i]['point'] == result[i + 1]['point'] and result[i]['classement'] < result[i + 1]['classement']:
+				swap = result[i]
+				result[i] = result[i + 1]
+				result[i + 1] = swap
+				i = -1
 			i += 1
-		return resultSortByPoint
+		return result
 
 	def tourNextSort(self, current_tournois):
-		resultSortByPoint = self.listSortPlayer(current_tournois)
-		result = [list_[2] for list_ in resultSortByPoint]
-		tabId = [dict_['id'] for dict_ in result]
+		current_tournois['infoJoueur'] = self.listSortPlayer(current_tournois)
+		tabId = [dict_['id'] for dict_ in current_tournois['infoJoueur']]
 		tour = [0, 0, 0, 0, 0, 0, 0, 0]
 		i = 0
-		tour = self.backtrackingSuisse(result, tabId, tour, i)
+		tour = self.backtrackingSuisse(current_tournois['infoJoueur'], tabId, tour, i)
 		listTour = [
 				{"match": ([tour[0], 0], [tour[1],  0]), "end": False},
 				{"match": ([tour[2], 0], [tour[3],  0]), "end": False},
