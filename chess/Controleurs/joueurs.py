@@ -2,24 +2,41 @@ from chess.Models.joueurs import JoueursModels
 import re
 
 class JoueursControleurs:
-	def add(self, lastname, firstname, birthDate, sexe, classement):
+		
+	def testName(self, name):
 		regexName = re.compile(r"^[a-z ,.'-]+$", re.IGNORECASE)
-		regexBirthDate = re.compile(r"(0[1-9]|1[0-9]|2[0-9]|3[01]).(0[1-9]|1[012]).[0-9]{4}")
+		verifName = regexName.search(name) is not None
+		return verifName
+		
+	def testDate(self, date):
+		regexDate = re.compile(r"(0[1-9]|1[0-9]|2[0-9]|3[01]).(0[1-9]|1[012]).[0-9]{4}")
+		verifDate = regexDate.search(date) is not None
+		return verifDate
+		
+	def testSexe(self, sexe):
 		regexSexe = re.compile(r"^(\s)*?[m|M|F|f](\s)*?$")
-		verifLastname = regexName.search(lastname) is not None
-		verifFistname = regexName.search(firstname) is not None
-		verifBirthDate = regexBirthDate.search(birthDate) is not None
 		verifSexe = regexSexe.search(sexe) is not None
-		verifclassement =  isinstance(classement, float) or isinstance(classement, int) or classement.isnumeric()
-		verif = verifLastname and verifFistname and verifBirthDate and verifSexe and verifclassement
+		return verifSexe
+		
+	def testClassement(self, string):
+		return string.isnumeric()
 
-		if verif:
-			newJoueur = JoueursModels()
-			newJoueur.create(lastname, firstname, birthDate, sexe, classement)
+	def	getPlayerByID(self, id):
+		jc = JoueursModels()
+		joueurTable = jc.playerDB()
+		return joueurTable.get(doc_id=id)
+
+	def testJoueursInBDD(self, idJoueur):
+		jc = JoueursModels()
+		joueurTable = jc.playerDB()
+		if joueurTable.contains(doc_id=int(idJoueur)):
 			return True
-		else:
-			return False
+		return False
 
 	def joueur_all(self):
 		listJoueur = JoueursModels()
 		return listJoueur.allJoueur()
+
+	def joueurUpdate(self, nbrClassement, id):
+		jm = JoueursModels()
+		jm.update(nbrClassement, id)

@@ -9,19 +9,16 @@ def menu():
 	pc = printCustome()
 	print('\033[2J')
 	while True:
-		pc.printText("Entrez ''1'' pour afficher la liste des joueur")
-		pc.printText("Entrez ''2'' pour ajouter un joueur")
-		pc.printText("Entrez ''3'' pour créer un tournois")
-		pc.printText("Entrez ''4'' afficher la liste des tournois")
+		pc.printText("Entrez ''1'' pour afficher les options des joueur")
+		pc.printText("Entrez ''2'' pour créer un tournois")
+		pc.printText("Entrez ''3'' afficher la liste des tournois")
 		pc.printText("Entrez ''exit'' pour quitter le programme")
 		commande = pc.inputClearScreen()
 		if commande == '1':
-			newJoueurs.listJoueurDisplay()
+			newJoueurs.listPlayer()
 		if commande == '2':
-			newJoueurs.formAddJoueur()
-		if commande == '3':
 			newTournois.formAddTournois()
-		if commande == '4':
+		if commande == '3':
 			newTournois.listTournoisDisplay()
 		if commande == 'exit':
 			break

@@ -144,7 +144,6 @@ class TournoisModels:
 
 	def	listSortPlayer(self, current_tournois):
 		result = sorted(current_tournois['infoJoueur'], key=lambda x: x['point'], reverse=True)
-		infoJoueurList = [[dict_['point'], dict_['classement'], dict_] for dict_ in result]
 		i = 0
 		while i < 7:
 			if result[i]['point'] == result[i + 1]['point'] and result[i]['classement'] < result[i + 1]['classement']:
