@@ -3,6 +3,10 @@ import re
 
 class JoueursControleurs:
 		
+	def add(self, lastname, firstname, birthDate, sexe, classement):
+		jm = JoueursModels()
+		jm.create(lastname, firstname, birthDate, sexe, classement)
+		
 	def testName(self, name):
 		regexName = re.compile(r"^[a-z ,.'-]+$", re.IGNORECASE)
 		verifName = regexName.search(name) is not None
@@ -22,13 +26,13 @@ class JoueursControleurs:
 		return string.isnumeric()
 
 	def	getPlayerByID(self, id):
-		jc = JoueursModels()
-		joueurTable = jc.playerDB()
+		jm = JoueursModels()
+		joueurTable = jm.playerDB()
 		return joueurTable.get(doc_id=id)
 
 	def testJoueursInBDD(self, idJoueur):
-		jc = JoueursModels()
-		joueurTable = jc.playerDB()
+		jm = JoueursModels()
+		joueurTable = jm.playerDB()
 		if joueurTable.contains(doc_id=int(idJoueur)):
 			return True
 		return False

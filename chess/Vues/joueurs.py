@@ -1,18 +1,30 @@
 from re import search
 from chess.Controleurs.joueurs import JoueursControleurs
 from chess.Vues.printText import printCustome
-from tinydb import TinyDB, Query, table
+from tinydb import TinyDB, Query
 
 class JoueursVues:
 	def formAddJoueur(self):
 		jc = JoueursControleurs()
-		lastname = self.addPlayer("Entrez le nom du joueur", jc.testName())
-		firstname = self.addPlayer("Entrez le prénom du joueur", jc.testName())
-		birthDate = self.addPlayer("Entrez la date de naissance du joueur au format ''dd/mm/aaaa''", jc.testDate())
-		sexe = self.addPlayer("Entrez le genre du joueur,\n''M'' pour masculin \n''F'' pour féminin", jc.testSexe())
-		classement = self.addPlayer("Entrez le classement du joueur", jc.testClassement())
-		jc.add(lastname, firstname, birthDate, sexe, classement)
-
+		while True:
+			lastname = self.addPlayer("Entrez le nom du joueur", jc.testName)
+			if lastname == 0: return 0
+			if lastname == 1: break
+			firstname = self.addPlayer("Entrez le prénom du joueur", jc.testName)
+			if firstname == 0: return 0
+			if firstname == 1: break
+			birthDate = self.addPlayer("Entrez la date de naissance du joueur au format ''dd/mm/aaaa''", jc.testDate)
+			if birthDate == 0: return 0
+			if birthDate == 1: break
+			sexe = self.addPlayer("Entrez le genre du joueur,\n''M'' pour masculin \n''F'' pour féminin", jc.testSexe)
+			if sexe == 0: return 0
+			if sexe == 1: break
+			classement = self.addPlayer("Entrez le classement du joueur", jc.testClassement)
+			if classement == 0: return 0
+			if classement == 1: break
+			jc.add(lastname, firstname, birthDate, sexe, classement)
+			break
+			
 	def addPlayer(self, string, ftTest):
 		pc = printCustome()
 		while True:
@@ -21,15 +33,19 @@ class JoueursVues:
 			choix = pc.inputClearScreen()
 			if choix == "menu":
 				return 0
-			if choix == "back":
+			elif choix == "back":
 				return 1
 			if ftTest(choix):
-				print("Vous avez saisi ''" + choix + "'' vous souhaitez le valider ?\
+				pc.printText("Vous avez saisi ''" + choix.capitalize() + "'' vous souhaitez le valider ?\
 					\nEntrez ''o'' ou ''oui'' pour valider\
 					\nEntrez ''n'' ou ''non'' pour effectuer une nouvelle saisie")
 				valid = input().strip().lower()
 				if valid == 'o' or valid == 'oui':
 					return choix
+				if valid == 'n' or valid == 'non':
+					continue
+			else:
+				print("Saisie incorrecte")
 
 	def listPlayer(self):
 		pc = printCustome()
@@ -42,7 +58,11 @@ class JoueursVues:
 			if choix == '1':
 				self.listJoueurDisplay()
 			if choix == '2':
-				self.formAddJoueur()
+				res = self.formAddJoueur()
+				if res == 0:
+					break
+				else:
+					continue
 			elif choix == '3':
 				res = self.playerUpdate()
 				if res == 0:
@@ -85,6 +105,10 @@ class JoueursVues:
 						return 1
 				else:
 					print("Le numero entré n'est pas dans la BDD")
+			elif choix == "menu":
+				return 0
+			elif choix == "back":
+				return 1
 			else:
 				print("Entrez un nombre ex: 5")
 
@@ -99,13 +123,17 @@ class JoueursVues:
 		key_dict = ""
 		if sort_on == '1':
 			result = tab
-		elif sort_on == '2':
+		if sort_on == '2':
 			key_dict = "firstname"
-		elif sort_on == '3':
+		if sort_on == '3':
 			key_dict = "lastname"
-		elif sort_on == '4':
+		if sort_on == '4':
 			key_dict = "classement"
-		else:
+		if sort_on == 'menu':
+			return 0
+		if sort_on == 'back':
+			return 1
+		if key_dict != '':
 			result = sorted(tab, key=lambda x: x[key_dict], reverse=True)
 		print('\033[2J')
 		newTable = [["N°", "Nom" , "Prénom", "Date de naissance", "Sexe", "Classeement"]]
@@ -133,8 +161,10 @@ class JoueursVues:
 			if sort_on == '2':
 				key_dict = "firstname"
 				print("Entrez le prénom du joueuer")
+			if sort_on == 'back':
+				return 1
 			if sort_on == 'menu':
-				search = False
+				return 0
 			if key_dict:
 				tab = list(joueurTable.search(User[key_dict] == pc.inputClearScreen()))
 				newTable = [["N°",  "Nom", "Prénom", "Date de naissance", "Sexe", "Classeement"]]

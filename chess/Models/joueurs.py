@@ -11,6 +11,11 @@ class JoueursModels:
 		self.classement = int(classement)
 		Joueurs.insert({'lastname': self.lastname, 'firstname': self.firstname, 'birthDate' : self.birthDate, 'sexe' : self.sexe, 'classement' : self.classement})
 
+	def last(self):
+		db = TinyDB('chess/Models/bdd/db.json')
+		Joueurs = db.table('Joueurs')
+		return Joueurs.get(doc_id=len(Joueurs))
+
 	def allJoueur(self):
 		db = TinyDB('chess/Models/bdd/db.json')
 		Joueurs = db.table('Joueurs')

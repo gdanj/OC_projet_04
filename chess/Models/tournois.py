@@ -2,10 +2,6 @@ from tinydb import TinyDB, Query
 
 
 class TournoisModels:
-	
-	def queryDB(self):
-		return Query()
-
 	def tournoisDB(self):
 		db = TinyDB('chess/Models/bdd/db.json')
 		return db.table('Tournois')
@@ -20,8 +16,8 @@ class TournoisModels:
 
 	def updateTournoisDB(self, current_tournois, key):
 		tournoisTable = self.tournoisDB()
-		query = self.queryDB()
-		tournoisTable.update({key : current_tournois[key]}, query.name == current_tournois['name'])
+		id = current_tournois.doc_id
+		tournoisTable.update({key : current_tournois[key]}, doc_ids=[id])
 
 	def getTime(self, pattern):
 		from datetime import datetime

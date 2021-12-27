@@ -89,37 +89,47 @@ class TournoisVues:
 			return False
 		tc.add(name, lieu, list_joueurs_tournois, typeTournois, int(nbTours), description)
 
+	def backMenu(self):
+		pc = printCustome()
+		pc.printText("Entrez ''menu'' pour retourner au menu principal\
+			\nEntrez ''back'' pour retourner en arrière")
+
 	def listTournoisDisplay(self):
 		pc = printCustome()
 		pc.printText('\n')
 		tc = TournoisControleurs()
 		tab = tc.tournois_all()
-		newTable = [["N°", "Nom ", "Lieu", "Date de début", "date de fin"]]
-		for tournois in tab:
-			newTable.append([
-				"''" + str(tournois.doc_id) + "''",
-				tournois["name"],
-				tournois["lieu"],
-				tournois["dataTournois"],
-				tournois["dateFinTournois"]
-			])
-		pc.printTable(newTable)
 		while True:
+			newTable = [["N°", "Nom ", "Lieu", "Date de début", "date de fin"]]
+			for tournois in tab:
+				newTable.append([
+					"''" + str(tournois.doc_id) + "''",
+					tournois["name"],
+					tournois["lieu"],
+					tournois["dataTournois"],
+					tournois["dateFinTournois"]
+				])
+			pc.printTable(newTable)
 			pc.printText("Entrez le numéro du tournois que vous souhaitez sélection\
 				\nEntrez ''menu'' pour retourner au menu principal")
 			choix = pc.inputClearScreen()
-			current_tournois = tc.selectTournoix(choix)
-			if current_tournois == 0:
-				pc.printText("Le tournois N°" + choix + " n'est pas dans la base de donnée")
-			else:
-				self.displayAllRound(current_tournois)
+			res = 2
 			if choix == 'menu':
+				break
+			if choix.isnumeric():
+				current_tournois = tc.selectTournoix(choix)
+				if current_tournois == 0:
+					pc.printText("Le tournois N°" + choix + " n'est pas dans la base de donnée")
+				else:
+					res = self.displayAllRound(current_tournois)
+			if res == 0:
 				break
 	
 	def	displayAllRound(self, current_tournois):
 		pc = printCustome()
 		tc = TournoisControleurs()
 		while True:
+			self.backMenu()
 			if current_tournois['currentTour'] == 0:
 				tc.tournoisSuisse(current_tournois)
 			print(current_tournois["name"])
@@ -134,15 +144,20 @@ class TournoisVues:
 			if tc.testNextRound(current_tournois):
 					pc.printText("Entrez ''next'' pour lancer le tour suivant")
 			choix = pc.inputClearScreen()
+			res = 2
 			if choix == "next" and tc.testNextRound(current_tournois):
 				tc.tournoisSuisse(current_tournois)
 			if choix == "score" and current_tournois['currentTour'] > 0:
-				self.displayScore(current_tournois)
-			if choix == "menu":
-				break
+				res = self.displayScore(current_tournois)
 			if choix.isnumeric():
 				if int(choix) <= len(current_tournois["listTour"]) and int(choix) >= 1:
-					self.displayRound(current_tournois, int(choix) - 1)
+					res = self.displayRound(current_tournois, int(choix) - 1)
+			if choix == "menu" or res == 0:
+				return 0
+			if res == 1:
+				continue
+			if choix == "back":
+				return 1
 	
 	def displayScore(self, current_tournois):
 		pc = printCustome()
@@ -153,18 +168,20 @@ class TournoisVues:
 		for info in listInfo:
 			player = tc.getPlayerByID(info['id'])
 			i += 1
-			newTable.append([str(i), player['lastname'], player["firstname"], player["birthDate"], player["sexe"], str(player["classement"]), str(info["point"]), "''" + str(player.doc_id) + "''"])
+			newTable.append([str(i), player['lastname'], player["firstname"], player["birthDate"],
+			player["sexe"], str(player["classement"]), str(info["point"]), "''" + str(player.doc_id) + "''"])
 		pc.printTable(newTable)
 	
 	def	displayRound(self, current_tournois, roundId):
-		print(current_tournois["name"])
-		print(current_tournois["lieu"])
 		matchDict = current_tournois["listTour"][roundId]
 		menu = False
 		pc = printCustome()
 		tc = TournoisControleurs()
 		while not menu:
 			i = 1
+			self.backMenu()
+			print(current_tournois["name"])
+			print(current_tournois["lieu"])
 			for match in matchDict["tour"]:
 				player1 = str(tc.getPlayerByID(match["match"][0][0])["firstname"]).capitalize()
 				player2 = str(tc.getPlayerByID(match["match"][1][0])["firstname"]).capitalize()
@@ -174,15 +191,20 @@ class TournoisVues:
 				i += 1
 			if not matchDict['tourEnd']:
 				print("Entrez le numéro du match que vous souhaitez cloturé\n")
-			pc.printText("Entrez ''0'' pour retourner au meunu précédent")
 			choix = pc.inputClearScreen()
-			if choix == "0":
-				menu = True
-			if int(choix) <= len(matchDict["tour"]) and int(choix) >= 1:
-				if matchDict["tour"][int(choix) - 1]["end"]:
-					print("Le match N°" + str(choix) + " est cloturé")
-				else:
-					self.addResult(current_tournois, roundId, int(choix) - 1)
+			res = 2
+			if choix.isnumeric():
+				if int(choix) <= len(matchDict["tour"]) and int(choix) >= 1:
+					if matchDict["tour"][int(choix) - 1]["end"]:
+						print("Le match N°" + str(choix) + " est cloturé")
+					else:
+						res = self.addResult(current_tournois, roundId, int(choix) - 1)
+			if choix == "menu" or res == 0:
+				return 0
+			if res == 1:
+				continue
+			if choix == "back":
+				return 1
 
 	def addResult(self, current_tournois, roundId, matchId):
 		matchDict = current_tournois["listTour"][roundId]
@@ -190,6 +212,7 @@ class TournoisVues:
 		tc = TournoisControleurs()
 		pc = printCustome()
 		while True:
+			self.backMenu()
 			player1Fname = str(tc.getPlayerByID(match["match"][0][0])["firstname"]).capitalize()
 			player1Lname = str(tc.getPlayerByID(match["match"][0][0])["lastname"]).upper()
 			player2Fname = str(tc.getPlayerByID(match["match"][1][0])["firstname"]).capitalize()
@@ -199,7 +222,9 @@ class TournoisVues:
 			pc.printText("Entrez ''2'' si " + player2Fname + " " + player2Lname + " a ganié")
 			choix = pc.inputClearScreen()
 			if choix == "menu":
-				break
+				return 0
+			if choix == "back":
+				return 1
 			elif choix.isnumeric():
 				if int(choix) == 0 or int(choix) == 1 or int(choix) == 2:
 					if choix == "0":
@@ -212,8 +237,8 @@ class TournoisVues:
 						match["match"][0][1] = 0
 						match["match"][1][1] = 1
 					pc.printText("match : ''" + str(matchId) + "''\n" + player1Fname + " vs " + player2Fname)
-					print("Score : " + str(match["match"][0][1]) + " " + str(match["match"][1][1]) + "\t\t" + " \
-						Statut " + ("Terminé" if match["end"] else "En cours") + "\n\n")
+					print("Score : " + str(match["match"][0][1]) + " " + str(match["match"][1][1]) + "\t\t" + \
+						" Statut " + ("Terminé" if match["end"] else "En cours") + "\n\n")
 					print("Vous souhaitez concerver ces données et cloturer le matche ?\
 						\nEntrez ''Oui'' ou ''Non''")
 					choix = pc.inputClearScreen()
