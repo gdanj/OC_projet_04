@@ -60,33 +60,38 @@ class TournoisControleurs:
 	def closeMatch(self, current_tournois, matchDict, match):
 		tm = TournoisModels()
 		match["end"] = True
-		matchDict["tourEnd"] = matchDict["tour"][0]["end"] and matchDict["tour"][1]["end"] and matchDict["tour"][2]["end"] and matchDict["tour"][3]["end"]
+		matchDict["tourEnd"] = matchDict["tour"][0]["end"] and matchDict["tour"][1]["end"] \
+			and matchDict["tour"][2]["end"] and matchDict["tour"][3]["end"]
 		if matchDict["tourEnd"]:
-			current_tournois['currentTour'] += 1
-			tm.updateTournoisDB(current_tournois, 'currentTour')
-			tm.updateInfoJoueur(current_tournois)
-		
+			tm.closeMatchUpdate(current_tournois)
 
 	def selectTournoix(self, choix):
 		tm = TournoisModels()
 		tournoisTable = tm.tournoisDB()
 		if tournoisTable.contains(doc_id=int(choix)):
 			current_tournois = tournoisTable.get(doc_id=int(choix))
-			self.tournoisSuisse(current_tournois)
 			return current_tournois
 		else:
 			return 0
+	
+	def testNextRound(seft, current_tournois):
+		if current_tournois['currentTour'] == 0 or current_tournois['currentTour'] == 1:
+			return True
+		return int(current_tournois['currentTour']) <= int(current_tournois['nbToursMax']) \
+			and current_tournois['listTour'][-1]["tourEnd"] == True
 	
 	def tournoisSuisse(self, current_tournois):
 		tm = TournoisModels()
 		tab_joueur = current_tournois["list_joueurs_tournois"]
 		if current_tournois['currentTour'] == 0:
 			tm.tourInit(current_tournois, tab_joueur)
-		if current_tournois['currentTour'] == 1 and current_tournois['listTour'] == []:
+		elif current_tournois['currentTour'] == 1 and current_tournois['listTour'] == []:
 			tm.firstRound(current_tournois)
-		if int(current_tournois['currentTour']) <= int(current_tournois['nbToursMax']) and current_tournois['listTour'][-1]["tourEnd"] == True:
+		elif int(current_tournois['currentTour']) <= int(current_tournois['nbToursMax']) \
+			and current_tournois['listTour'][-1]["tourEnd"] == True:
 			tm.tourNextSort(current_tournois)
-		if int(current_tournois['currentTour']) > int(current_tournois['nbToursMax']) and current_tournois['listTour'][-1]["tourEnd"] == True:
+		elif int(current_tournois['currentTour']) > int(current_tournois['nbToursMax']) \
+			and current_tournois['listTour'][-1]["tourEnd"] == True:
 			if (current_tournois['dateFinTournois'] == "En cours"):
 				tm.lastround(current_tournois)
 				from datetime import date

@@ -1,4 +1,4 @@
-from tinydb import TinyDB, Query
+from tinydb import TinyDB
 
 class JoueursModels:
 	def create(self, lastname, firstname, birthDate, sexe, classement):

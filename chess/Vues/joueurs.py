@@ -1,29 +1,29 @@
 from re import search
 from chess.Controleurs.joueurs import JoueursControleurs
 from chess.Vues.printText import printCustome
-from tinydb import TinyDB, Query
+from tinydb import TinyDB, Query, table
 
 class JoueursVues:
 	def formAddJoueur(self):
 		pc = printCustome()
 		pc.printText("Pour retourner au menu principal, entrez ''menu'' \nEntrez le nom du joueur")
-		lastname = input()
+		lastname = pc.inputClearScreen()
 		if lastname == "menu":
 			return False
 		pc.printText("Pour retourner au menu principal, entrez ''menu'' \nEntrez le prénom du joueur")
-		firstname = input()
+		firstname = pc.inputClearScreen()
 		if firstname == "menu":
 			return False
 		pc.printText("Pour retourner au menu principal, entrez ''menu'' \nEntrez la date de naissance du joueur au format ''dd/mm/aaaa''")
-		birthDate = input()
+		birthDate = pc.inputClearScreen()
 		if birthDate == "menu":
 			return False
 		pc.printText("Pour retourner au menu principal, entrez ''menu'' \nEntrez le genre du joueur,\n''M'' pour masculin \n''F'' pour féminin")
-		sexe = input()
+		sexe = pc.inputClearScreen()
 		if sexe == "menu":
 			return False
 		pc.printText("Pour retourner au menu principal, entrez ''menu'' \nEntrez le classement du joueur")
-		classement = input()
+		classement = pc.inputClearScreen()
 		if classement == "menu":
 			return False
 		newJoueur = JoueursControleurs()
@@ -35,7 +35,7 @@ class JoueursVues:
 		pc.printText('\n')
 		tab = list_joueurs.joueur_all()
 		pc.printText("Triez par :\n''1'' Ordre d'arriver \n''2'' Nom \n''3'' Prénom\n''4'' Classement")
-		sort_on = input()
+		sort_on = pc.inputClearScreen()
 		key_dict = ""
 		if sort_on == '1':
 			key_dict = "a"
@@ -48,13 +48,12 @@ class JoueursVues:
 		if key_dict == "a":
 			result = tab
 		else:
-			decorated = [(dict_[key_dict], dict_) for dict_ in tab]
-			decorated.sort(reverse=True)
-			result = [dict_ for (key, dict_) in decorated]
-		pc.printText("N°" + "\t Nom "  + "\t Prénom " + "\t Date de naissance " + "\t Sexe " + "\t Classeement ")
+			result = sorted(tab, key=lambda x: x[key_dict], reverse=True)
+		print('\033[2J')
+		newTable = [["N°", "Nom" , "Prénom", "Date de naissance", "Sexe", "Classeement"]]
 		for joueur in result:
-			pc.printText(str(joueur.doc_id) + "\t" +joueur["lastname"] + "\t\t" + joueur["firstname"] + "\t\t" + joueur["birthDate"] + "\t\t" + joueur["sexe"] + "\t\t" + str(joueur["classement"]))
-		pc.printText('\n')
+			newTable.append(["''" + str(joueur.doc_id) + "''", joueur["lastname"], joueur["firstname"], joueur["birthDate"], joueur["sexe"], str(joueur["classement"])])
+		pc.printTable(newTable)
 		return tab
 
 	def listJoueurDisplayFind(self):
@@ -63,23 +62,22 @@ class JoueursVues:
 		search = True
 		while search:
 			pc.printText("Recherchez par :\n''1'' Nom \n''2'' Prénom \n")
-			sort_on = input()
+			sort_on = pc.inputClearScreen()
 			User = Query()
 			db = TinyDB('chess/Models/bdd/db.json')
 			joueurTable = db.table('Joueurs')
 			key_dict = ""
 			if sort_on == '1':
 				key_dict = "lastname"
-				pc.printText("Entrez le nom du joueuer")
+				print("Entrez le nom du joueuer")
 			if sort_on == '2':
 				key_dict = "firstname"
-				pc.printText("Entrez le prénom du joueuer")
+				print("Entrez le prénom du joueuer")
 			if sort_on == 'menu':
 				search = False
 			if key_dict:
-				tab = list(joueurTable.search(User[key_dict] == input().capitalize()))
-				i = 1
-				pc.printText("N°" + "\t Nom "  + "\t Prénom " + "\t Date de naissance " + "\t Sexe " + "\t Classeement ")
+				tab = list(joueurTable.search(User[key_dict] == pc.inputClearScreen()))
+				newTable = [["N°",  "Nom", "Prénom", "Date de naissance", "Sexe", "Classeement"]]
 				for joueur in tab:
-					pc.printText(str(joueur.doc_id) + "\t" +joueur["lastname"] + "\t\t" + joueur["firstname"] + "\t\t" + joueur["birthDate"] + "\t\t" + joueur["sexe"] + "\t\t" + str(joueur["classement"]))
-				pc.printText('\n')
+					newTable.append(["''" + str(joueur.doc_id) + "''", joueur["lastname"], joueur["firstname"], joueur["birthDate"], joueur["sexe"], str(joueur["classement"])])
+				pc.printTable(newTable)

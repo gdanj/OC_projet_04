@@ -22,14 +22,18 @@ class TournoisModels:
 		tournoisTable = self.tournoisDB()
 		query = self.queryDB()
 		tournoisTable.update({key : current_tournois[key]}, query.name == current_tournois['name'])
+
+	def getTime(self, pattern):
+		from datetime import datetime
+		now = datetime.now()
+		dt_string = now.strftime(pattern)
+		return dt_string
 	
 	def create(self, name, lieu, list_joueurs_tournois, typeTournois, nbTours, description):
 		Tournois = self.tournoisDB()
 		self.name = name.capitalize()
 		self.lieu = lieu.capitalize()
-		from datetime import date
-		today = date.today()
-		d1 = today.strftime("%d/%m/%Y")
+		d1 = self.getTime("%d/%m/%Y")
 		self.dateDebutTournois = d1
 		self.dateFinTournois = "En cours"
 		self.list_joueurs_tournois = list_joueurs_tournois
@@ -77,14 +81,17 @@ class TournoisModels:
 
 	def firstRound(self, current_tournois):
 		result = self.listPlayerSort(current_tournois)
+		dt_string = self.getTime("%d/%m/%Y %H:%M")
 		current_tournois['listTour'].append({
 			"id": 1,
 			"tour": [
-				{"match": [result[0]['id'], result[4]['id']], "score": [0, 0], "end": False},
-				{"match": [result[1]['id'], result[5]['id']], "score": [0, 0], "end": False},
-				{"match": [result[2]['id'], result[6]['id']], "score": [0, 0], "end": False},
-				{"match": [result[3]['id'], result[7]['id']], "score": [0, 0], "end": False}
+				{"match": ([result[0]['id'], 0], [result[4]['id'], 0]), "end": False},
+				{"match": ([result[1]['id'], 0], [result[5]['id'], 0]), "end": False},
+				{"match": ([result[2]['id'], 0], [result[6]['id'], 0]), "end": False},
+				{"match": ([result[3]['id'], 0], [result[7]['id'], 0]), "end": False}
 			],
+			"startTime" : dt_string,
+			"endTime" : "",
 			"tourEnd": False
 		})
 		self.updateTournoisDB(current_tournois, 'infoJoueur')
@@ -128,6 +135,13 @@ class TournoisModels:
 				i += 1
 		return False
 
+	def closeMatchUpdate(self, current_tournois):
+		current_tournois['listTour'][current_tournois['currentTour'] - 1]['endTime'] = self.getTime("%d/%m/%Y %H:%M")
+		current_tournois['currentTour'] += 1
+		self.updateTournoisDB(current_tournois, 'currentTour')
+		self.updateTournoisDB(current_tournois, 'listTour')
+		self.updateInfoJoueur(current_tournois)
+
 	def	listSortPlayer(self, current_tournois):
 		infoJoueurList = [[dict_['point'], dict_['classement'], dict_] for dict_ in current_tournois['infoJoueur']]
 		tabPoint = [dict_['point'] for dict_ in current_tournois['infoJoueur']]
@@ -140,7 +154,8 @@ class TournoisModels:
 						resultSortByPoint.append(infoJoueur)
 		i = 0
 		while i < 7:
-			if resultSortByPoint[i][0] == resultSortByPoint[i + 1][0] and resultSortByPoint[i][1] < resultSortByPoint[i + 1][1]:
+			if resultSortByPoint[i][0] == resultSortByPoint[i + 1][0] \
+				and resultSortByPoint[i][1] < resultSortByPoint[i + 1][1]:
 				swap = resultSortByPoint[i]
 				resultSortByPoint[i] = resultSortByPoint[i + 1]
 				resultSortByPoint[i + 1] = swap
@@ -156,23 +171,24 @@ class TournoisModels:
 		i = 0
 		tour = self.backtrackingSuisse(result, tabId, tour, i)
 		listTour = [
-				{"match": [tour[0], tour[1]], "score": [0, 0], "end": False},
-				{"match": [tour[2], tour[3]], "score": [0, 0], "end": False},
-				{"match": [tour[4], tour[5]], "score": [0, 0], "end": False},
-				{"match": [tour[6], tour[7]], "score": [0, 0], "end": False}
+				{"match": ([tour[0], 0], [tour[1],  0]), "end": False},
+				{"match": ([tour[2], 0], [tour[3],  0]), "end": False},
+				{"match": ([tour[4], 0], [tour[5],  0]), "end": False},
+				{"match": ([tour[6], 0], [tour[7],  0]), "end": False}
 			]
+		dt_string = self.getTime("%d/%m/%Y %H:%M")
 		current_tournois['listTour'].append({
 			"id": current_tournois['currentTour'],
 			"tour": listTour,
+			"startTime" : dt_string,
+			"endTime" : "",
 			"tourEnd": False
 		})
 		self.updateTournoisDB(current_tournois, 'infoJoueur')
 		self.updateTournoisDB(current_tournois, 'listTour')
-	
+
 	def lastround(self, current_tournois):
-		from datetime import date
-		today = date.today()
-		current_tournois['dateFinTournois'] = today.strftime("%d/%m/%Y")
+		current_tournois['dateFinTournois'] = self.getTime("%d/%m/%Y")
 		self.updateTournoisDB(current_tournois, 'dateFinTournois')
 		self.updateInfoJoueur(current_tournois)
 
@@ -181,10 +197,10 @@ class TournoisModels:
 		infoJoueurList = current_tournois["infoJoueur"]
 		for match in matchList:
 			for i in range(8):
-				if match["match"][0] == infoJoueurList[i]["id"]:
-					infoJoueurList[i]["point"] += match["score"][0]
-					infoJoueurList[i]["history"].append(match["match"][1])
-				if match["match"][1] == infoJoueurList[i]["id"]:
-					infoJoueurList[i]["point"] += match["score"][1]
-					infoJoueurList[i]["history"].append(match["match"][0])
+				if match["match"][0][0] == infoJoueurList[i]["id"]:
+					infoJoueurList[i]["point"] += match["match"][0][1]
+					infoJoueurList[i]["history"].append(match["match"][1][0])
+				if match["match"][1][0] == infoJoueurList[i]["id"]:
+					infoJoueurList[i]["point"] += match["match"][1][1]
+					infoJoueurList[i]["history"].append(match["match"][0][0])
 		self.updateTournoisDB(current_tournois, 'infoJoueur')
