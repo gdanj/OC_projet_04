@@ -115,7 +115,15 @@ class TournoisControleurs:
         matchDict["tourEnd"] = matchDict["tour"][0]["end"] and matchDict["tour"][1]["end"] \
             and matchDict["tour"][2]["end"] and matchDict["tour"][3]["end"]
         if matchDict["tourEnd"]:
+            c = current_tournois
             tm.closeMatchUpdate(current_tournois)
+            if int(c['currentTour']) > int(c['nbToursMax']) and c['listTour'][-1]["tourEnd"]:
+                if (c['dateFinTournois'] == "En cours"):
+                    tm.lastround(c)
+                    from datetime import date
+                    today = date.today()
+                    c['dateFinTournois'] = today.strftime("%d/%m/%Y")
+                    tm.updateTournoisDB(c, 'dateFinTournois')
 
     def selectTournoix(self, choix):
         """Test le choix de l'utilisateur, si le choix exite dans la BDD retourne
@@ -176,11 +184,3 @@ class TournoisControleurs:
         elif int(current_tournois['currentTour']) <= int(current_tournois['nbToursMax']) \
                 and current_tournois['listTour'][-1]["tourEnd"]:
             tm.tourNextSort(current_tournois)
-        elif int(current_tournois['currentTour']) > int(current_tournois['nbToursMax']) \
-                and current_tournois['listTour'][-1]["tourEnd"]:
-            if (current_tournois['dateFinTournois'] == "En cours"):
-                tm.lastround(current_tournois)
-                from datetime import date
-                today = date.today()
-                current_tournois['dateFinTournois'] = today.strftime("%d/%m/%Y")
-                tm.updateTournoisDB(current_tournois, 'dateFinTournois')
